@@ -1,6 +1,7 @@
 package com.movierank.service;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class MovieService {
 	public void ticketRank() throws IOException {
 		// 비즈니스로직: 네이버, 다음 영화정보 크롤링 및 DB에 저장
 		
-		// 1~20위까지 영화제목과 네이버, 다음 영화코드값을 저장하는 리스트
+		// 1~10위까지 영화제목과 네이버, 다음 영화코드값을 저장하는 리스트
 		List<MovieDTO> rankList = new ArrayList<>();
 		String naverRankUrl = "https://movie.naver.com/movie/running/current.nhn?order=reserve";
 		String daumRankUrl = "http://ticket2.movie.daum.net/Movie/MovieRankList.aspx";
@@ -79,8 +80,10 @@ public class MovieService {
 				daumscore = Double.parseDouble(daumPoint); // 다음 평점
 			}
 			
-			
-			MovieDTO mDto = new MovieDTO(rank, movie, imgsrc, type, opendate, bookingrate, runtime, director, actor, navercode, naverscore, daumcode, daumscore);
+			DecimalFormat fmt = new DecimalFormat("#.#");
+			String fmtVal = fmt.format((daumscore + naverscore)/2);
+			Double score = Double.parseDouble(fmtVal);
+			MovieDTO mDto = new MovieDTO(rank, movie, imgsrc, type, opendate, bookingrate, runtime, director, actor, navercode, naverscore, daumcode, daumscore, score);
 			
 			log.info("<><><><><><>MOVIE: "+ mDto.toString());
 			rankList.add(mDto);
